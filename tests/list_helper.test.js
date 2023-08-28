@@ -1,6 +1,6 @@
 const listHelper = require('../utils/list_helper')
 
-test('palindrome of react', () => {
+test('dummy function returns 1', () => {
   const blogs = []
 
   const result = listHelper.dummy(blogs)
