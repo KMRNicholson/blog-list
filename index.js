@@ -1,32 +1,7 @@
-const express = require('express')
-const mongoose = require('mongoose')
+const app = require('./app') // the actual Express application
 const config = require('./utils/config')
-const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
-const blogRouter = require('./controllers/blogs')
-
-mongoose.set('strictQuery', false)
-
-logger.info('connecting to db')
-mongoose.connect(config.MONGODB_URI)
-  .then(() => {
-    logger.info('connected to MongoDB')
-  })
-  .catch(error => {
-    logger.error('error connecting to MongoDB:', error.message)
-  })
-
-const app = express()
-
-app.use(middleware.cors)
-app.use(middleware.json)
-app.use(middleware.requestLogger)
-
-app.use(blogRouter)
-
-app.use(middleware.errorHandler)
-app.use(middleware.unknownEndpoint)
 
 app.listen(config.PORT, () => {
-  console.log(`Server running on port ${config.PORT}`)
+  logger.info(`Server running on port ${config.PORT}`)
 })
