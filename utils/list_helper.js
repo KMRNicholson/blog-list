@@ -1,7 +1,10 @@
-const dummy = blogs => blogs.likes - blogs.likes + 1
+const dummy = blogs => {
+  console.log(blogs)
+  return 1
+}
 
 const totalLikes = blogs => {
-  if (blogs.length === 1) return blogs[0].length
+  if (blogs.length === 1) return blogs[0].likes
 
   if (blogs.length >= 1) {
     const sum = (accumulator, currentValue) => accumulator + currentValue
