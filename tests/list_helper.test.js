@@ -66,14 +66,14 @@ describe('favorite blog', () => {
 
     const expected = { ...blogs[0] }
 
-    const result = listHelper.totalLikes(listWithOneBlog)
-    expect(result).toBe(expected)
+    const result = listHelper.favoriteBlog(listWithOneBlog)
+    expect(result).toEqual(expected)
   })
 
   test('of a list with one clear favorite returns that favorite', () => {
-    const expected = blogs[2]
+    const expected = { ...blogs[2] }
 
-    const result = listHelper.totalLikes(blogs)
-    expect(result).toBe(expected)
+    const result = listHelper.favoriteBlog(blogs)
+    expect(result).toEqual(expected)
   })
 })
