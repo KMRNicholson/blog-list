@@ -53,9 +53,14 @@ const mostBlogs = blogs => {
   return null
 }
 
+const mostlikes = blogs => {
+  console.log('not implemented yet!', blogs)
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostlikes
 }

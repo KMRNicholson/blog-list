@@ -155,3 +155,60 @@ describe('most blogs', () => {
     expect(result).toEqual(expected)
   })
 })
+
+describe('most likes', () => {
+  test('of empty list is null', () => {
+    const result = listHelper.mostLikes([])
+    expect(result).toEqual(null)
+  })
+
+  test('when list has only one blog, equals that author and likes count', () => {
+    const onlyOne = blogs[0]
+    const listWithOneBlog = [
+      onlyOne
+    ]
+
+    const expected = {
+      author: onlyOne.author,
+      likes: onlyOne.likes
+    }
+
+    const result = listHelper.mostLikes(listWithOneBlog)
+    expect(result).toEqual(expected)
+  })
+
+  test('of a list with one most liked author returns that author and likes count', () => {
+    const authorWithMostLikes = blogs[1].author
+
+    const expected = {
+      author: authorWithMostLikes,
+      likes: 5
+    }
+
+    const result = listHelper.mostLikes(blogs)
+    expect(result).toEqual(expected)
+  })
+
+  test('of a list with a tied favorite returns first one encountered', () => {
+    const blogsCopy = [...blogs]
+
+    const newBlog = {
+      _id: '5a422a851b54a676234d17f1',
+      title: 'React patterns, volume 2',
+      author: 'Michael Chan',
+      url: 'https://reactpatterns.com/',
+      likes: 4,
+      __v: 0
+    }
+
+    blogsCopy.push(newBlog)
+
+    const expected = {
+      author: newBlog.author,
+      likes: 5
+    }
+
+    const result = listHelper.mostLikes(blogsCopy)
+    expect(result).toEqual(expected)
+  })
+})
