@@ -1,10 +1,12 @@
+const _ = require('lodash')
+
 const dummy = blogs => {
   console.log(blogs)
   return 1
 }
 
 const totalLikes = blogs => {
-  if (blogs.length === 1) return blogs[0].likes
+  if (blogs.length === 1) return _.first(blogs).likes
 
   if (blogs.length >= 1) {
     const sum = (accumulator, currentValue) => accumulator + currentValue
@@ -17,7 +19,7 @@ const totalLikes = blogs => {
 }
 
 const favoriteBlog = blogs => {
-  if (blogs.length === 1) return blogs[0]
+  if (blogs.length === 1) return _.first(blogs)
 
   if (blogs.length >= 1) {
     const max = (maxLikes, currentLikes) => Math.max(currentLikes, maxLikes)
