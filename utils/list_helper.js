@@ -35,7 +35,22 @@ const favoriteBlog = blogs => {
 }
 
 const mostBlogs = blogs => {
-  console.log('not implemented yet!', blogs)
+  if (blogs.length === 1) {
+    return {
+      author: _.first(blogs).author,
+      blogs: blogs.length
+    }
+  }
+
+  if (blogs.length >= 1) {
+    const countedBlogs = _.countBy(blogs, 'author')
+    const formattedList = _.map(countedBlogs, (count, author) => ({ author, blogs: count }))
+    const sortedList = _.orderBy(formattedList, 'blogs', 'desc')
+
+    return _.head(sortedList)
+  }
+
+  return null
 }
 
 module.exports = {
