@@ -53,8 +53,24 @@ const mostBlogs = blogs => {
   return null
 }
 
-const mostlikes = blogs => {
-  console.log('not implemented yet!', blogs)
+const mostLikes = blogs => {
+  if (blogs.length === 1) {
+    return {
+      author: _.first(blogs).author,
+      likes: _.first(blogs).likes
+    }
+  }
+
+  if (blogs.length >= 1) {
+    const groupedBlogs = _.groupBy(blogs, 'author')
+    const formattedList = _.map(groupedBlogs, (blogList, author) => (
+      { author, likes: totalLikes(blogList) }))
+    const sortedList = _.orderBy(formattedList, 'likes', 'desc')
+
+    return _.head(sortedList)
+  }
+
+  return null
 }
 
 module.exports = {
@@ -62,5 +78,5 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
-  mostlikes
+  mostLikes
 }
