@@ -76,4 +76,82 @@ describe('favorite blog', () => {
     const result = listHelper.favoriteBlog(blogs)
     expect(result).toEqual(expected)
   })
+
+  test('of a list with a tied favorite returns first one encountered', () => {
+    const blogsCopy = [...blogs]
+
+    const firstFavorite = blogsCopy[2]
+    const tiedFavorite = {
+      _id: '5a422a851b54a676234d17f5',
+      title: 'Continuous Delivery',
+      author: 'Martin Fowler',
+      url: 'https://continuousdelivery.com/',
+      likes: firstFavorite.likes,
+      __v: 0
+    }
+
+    blogsCopy.push(tiedFavorite)
+
+    const expected = { ...firstFavorite }
+
+    const result = listHelper.favoriteBlog(blogsCopy)
+    expect(result).toEqual(expected)
+  })
+})
+
+describe('most blogs', () => {
+  test('of empty list is null', () => {
+    const result = listHelper.mostBlogs([])
+    expect(result).toEqual(null)
+  })
+
+  test('when list has only one blog, equals that author and count as one', () => {
+    const onlyOne = blogs[0]
+    const listWithOneBlog = [
+      onlyOne
+    ]
+
+    const expected = {
+      author: onlyOne.author,
+      blogs: 1
+    }
+
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result).toEqual(expected)
+  })
+
+  test('of a list with one dominant author returns that author and count of blogs', () => {
+    const authorWithMostBlogs = blogs[1].author
+
+    const expected = {
+      author: authorWithMostBlogs,
+      blogs: 2
+    }
+
+    const result = listHelper.mostBlogs(blogs)
+    expect(result).toEqual(expected)
+  })
+
+  test('of a list with a tied favorite returns first one encountered', () => {
+    const blogsCopy = [...blogs]
+
+    const newBlog = {
+      _id: '5a422a851b54a676234d17f1',
+      title: 'React patterns, volume 2',
+      author: 'Michael Chan',
+      url: 'https://reactpatterns.com/',
+      likes: 1,
+      __v: 0
+    }
+
+    blogsCopy.push(newBlog)
+
+    const expected = {
+      author: newBlog.author,
+      blogs: 2
+    }
+
+    const result = listHelper.mostBlogs(blogsCopy)
+    expect(result).toEqual(expected)
+  })
 })
