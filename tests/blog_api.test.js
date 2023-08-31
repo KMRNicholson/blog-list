@@ -31,6 +31,13 @@ describe('get /api/blogs', () => {
 
     expect(response.body).toHaveLength(blogs.length)
   })
+
+  test('returns blogs with property "id"', async () => {
+    const response = await api.get('/api/blogs')
+    const blog = response.body[0]
+
+    expect(blog.id).toBeDefined()
+  })
 })
 
 describe('post /api/blogs', () => {
