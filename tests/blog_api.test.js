@@ -32,3 +32,22 @@ describe('get /api/blogs', () => {
     expect(response.body).toHaveLength(blogs.length)
   })
 })
+
+describe('post /api/blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+  })
+
+  test('automatic assignment of an id', async () => {
+    const blog = {
+      title: 'React',
+      author: 'Michael',
+      url: 'https://reactpatterns.com/',
+      likes: 1
+    }
+
+    await api.post('/api/blogs')
+      .send(blog)
+      .expect(201)
+  })
+})
