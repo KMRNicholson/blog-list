@@ -38,7 +38,7 @@ describe('post /api/blogs', () => {
     await Blog.deleteMany({})
   })
 
-  test('automatic assignment of an id', async () => {
+  test('successfully creates a blog', async () => {
     const blog = {
       title: 'React',
       author: 'Michael',
@@ -49,5 +49,9 @@ describe('post /api/blogs', () => {
     await api.post('/api/blogs')
       .send(blog)
       .expect(201)
+
+    const response = await api.get('/api/blogs')
+
+    expect(response.body).toHaveLength(1)
   })
 })
