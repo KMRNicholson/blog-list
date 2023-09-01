@@ -69,4 +69,21 @@ describe('post /api/blogs', () => {
 
     expect(response.body).toHaveLength(1)
   })
+
+  test('default likes to 0 if not provided in request body', async () => {
+    const blog = {
+      title: 'React',
+      author: 'Michael',
+      url: 'https://reactpatterns.com/'
+    }
+
+    await api.post('/api/blogs')
+      .send(blog)
+      .expect(201)
+
+    const response = await api.get('/api/blogs')
+    const createdBlog = response.body[0]
+
+    expect(createdBlog.likes).toEqual(0)
+  })
 })
