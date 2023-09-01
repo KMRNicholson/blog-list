@@ -6,7 +6,10 @@ blogsRouter.get('/api/blogs', async (request, response) => { response.send(await
 blogsRouter.get('/api/blogs/:id', async (request, response) => { response.json(await Blog.findById(request.params.id)) })
 
 blogsRouter.post('/api/blogs', async (request, response) => {
-  const blog = new Blog(request.body)
+  const data = request.body
+  if (!data.likes) data.likes = 0
+
+  const blog = new Blog(data)
   const result = await blog.save()
 
   if (result) response.status(201).json(result)
