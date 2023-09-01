@@ -13,9 +13,9 @@ describe('get /api/blogs', () => {
     await Blog.deleteMany({})
     let blogObject
 
-    await blogs.forEach(async blog => {
+    await blogs.forEach(blog => {
       blogObject = new Blog(blog)
-      await blogObject.save()
+      blogObject.save()
     })
   })
 
@@ -37,6 +37,14 @@ describe('get /api/blogs', () => {
     const blog = response.body[0]
 
     expect(blog.id).toBeDefined()
+  })
+
+  test('returns specific blog when given id', async () => {
+    const expected = blogs[0]
+    const response = await api.get(`/api/blogs/${expected._id}`)
+    const blog = response.body
+
+    expect(expected._id).toEqual(blog.id)
   })
 })
 
