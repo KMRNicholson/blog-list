@@ -6,8 +6,15 @@ blogsRouter.get('/api/blogs', async (request, response) => { response.send(await
 blogsRouter.get('/api/blogs/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id)
 
-  if (blog) response.json(await Blog.findById(request.params.id))
+  if (blog) response.json(blog)
 
+  response.status(404).send()
+})
+
+blogsRouter.delete('/api/blogs/:id', async (request, response) => {
+  const blog = await Blog.findById(request.params.id)
+
+  if (blog) response.send(await Blog.deleteOne(blog))
   response.status(404).send()
 })
 
