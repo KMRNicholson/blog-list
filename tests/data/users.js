@@ -1,3 +1,5 @@
+const mongoose = require('mongoose')
+
 const users = [
   {
     _id: '5a422a851b54a676234d17f9',
@@ -5,7 +7,7 @@ const users = [
     name: 'Michael Chan',
     passwordHash: '8dui12982e1a',
     blogs: [
-      '5a422a851b54a676234d17f7'
+      new mongoose.Types.ObjectId('5a422a851b54a676234d17f7')
     ],
     __v: 0
   },
@@ -15,7 +17,7 @@ const users = [
     name: 'Edsger W. Dijkstra',
     passwordHash: '9198dji91uh',
     blogs: [
-      '5a422aa71b54a676234d17f8'
+      new mongoose.Types.ObjectId('5a422aa71b54a676234d17f8')
     ],
     __v: 0
   }

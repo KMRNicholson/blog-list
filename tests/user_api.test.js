@@ -24,6 +24,7 @@ describe('post /api/users', () => {
       .post('/api/users')
       .send(user)
       .expect(201)
+      .expect('Content-Type', /application\/json/)
   })
 
   test('returns 400 Bad Request if missing username', async () => {
