@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const helper = require('./helper')
 
 const blogSchema = new mongoose.Schema({
   title: {
@@ -14,21 +15,14 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  likes: Number
-})
-
-blogSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    const transformedBlog = {
-      ...returnedObject,
-      id: returnedObject._id.toString()
-    }
-
-    delete transformedBlog._id
-    delete transformedBlog.__v
-    return transformedBlog
+  likes: Number,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }
 })
+
+blogSchema.set('toJSON', helper.transformId)
 
 const Blog = mongoose.model('Blog', blogSchema)
 
