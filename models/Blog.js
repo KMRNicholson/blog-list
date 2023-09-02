@@ -22,7 +22,7 @@ const blogSchema = new mongoose.Schema({
   }
 })
 
-blogSchema.set('toJSON', helper.transformId)
+blogSchema.set('toJSON', helper.transform())
 
 const Blog = mongoose.model('Blog', blogSchema)
 

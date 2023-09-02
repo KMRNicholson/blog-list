@@ -26,16 +26,10 @@ const userSchema = new mongoose.Schema({
   ]
 })
 
-const removePasswordHash = {
-  transform: (document, returnedObject) => {
-    const transformedUser = { ...returnedObject }
-    delete transformedUser.passwordHash
-    return transformedUser
-  }
-}
+const removeProperties = ['passwordHash']
 
-userSchema.set('toJSON', helper.transformId)
-userSchema.set('toJSON', removePasswordHash)
+userSchema.set('toJSON', helper.transform(removeProperties))
+// userSchema.set('toJSON', removePasswordHash)
 
 const User = mongoose.model('User', userSchema)
 
