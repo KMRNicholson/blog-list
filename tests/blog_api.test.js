@@ -11,12 +11,10 @@ const api = supertest(app)
 describe('get /api/blogs', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
-    let blogObject
 
-    await blogs.forEach(blog => {
-      blogObject = new Blog(blog)
-      blogObject.save()
-    })
+    const blogObjects = blogs.map(blog => new Blog(blog))
+    const promises = blogObjects.map(blog => blog.save())
+    await Promise.all(promises)
   })
 
   test('returns blogs as json', async () => {
@@ -85,5 +83,37 @@ describe('post /api/blogs', () => {
     const createdBlog = response.body[0]
 
     expect(createdBlog.likes).toEqual(0)
+  })
+
+  test('returns 400 Bad Request if missing url', async () => {
+    const blog = {
+      title: 'React',
+      author: 'Michael'
+    }
+
+    await api.post('/api/blogs')
+      .send(blog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    const savedBlogs = response.body
+
+    expect(savedBlogs).toHaveLength(0)
+  })
+
+  test('returns 400 Bad Request if missing url', async () => {
+    const blog = {
+      author: 'Michael',
+      url: 'https://reactpatterns.com/'
+    }
+
+    await api.post('/api/blogs')
+      .send(blog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    const savedBlogs = response.body
+
+    expect(savedBlogs).toHaveLength(0)
   })
 })
