@@ -156,8 +156,7 @@ describe('delete /api/blogs/:id', () => {
 
     await api
       .delete(`/api/blogs/${blog.id}`)
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
+      .expect(204)
 
     const after = await api.get('/api/blogs')
     const afterDel = after.body
