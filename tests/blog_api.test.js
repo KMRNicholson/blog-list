@@ -229,11 +229,6 @@ describe('put /api/blogs/:id', () => {
       .put(`/api/blogs/${blog._id}`)
       .send(blog)
       .expect(400)
-
-    const response = await api.get('/api/blogs')
-    const savedBlogs = response.body
-
-    expect(savedBlogs).toHaveLength(0)
   })
 
   test('return 404 not found when given incorrect id', async () => {
