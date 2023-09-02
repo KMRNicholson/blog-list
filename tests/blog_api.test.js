@@ -36,6 +36,11 @@ describe('get /api/blogs', () => {
 
     expect(blog.id).toBeDefined()
   })
+
+  test('returns blogs with creator information', async () => {
+    const response = await api.get('/api/blogs')
+    response.body.forEach(blog => expect(typeof blog.user).toEqual('object'))
+  })
 })
 
 describe('get /api/blogs/:id', () => {

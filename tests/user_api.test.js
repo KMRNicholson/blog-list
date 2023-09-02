@@ -24,6 +24,12 @@ describe('get /api/users', () => {
       .expect('Content-Type', /application\/json/)
   })
 
+  test('returns all users', async () => {
+    const response = await api.get('/api/users')
+
+    expect(response.body).toHaveLength(users.length)
+  })
+
   test('returns users without passwords', async () => {
     const { body } = await api.get('/api/users')
 
