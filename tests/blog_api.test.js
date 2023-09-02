@@ -101,7 +101,7 @@ describe('post /api/blogs', () => {
     expect(savedBlogs).toHaveLength(0)
   })
 
-  test('returns 400 Bad Request if missing url', async () => {
+  test('returns 400 Bad Request if missing title', async () => {
     const blog = {
       author: 'Michael',
       url: 'https://reactpatterns.com/'
