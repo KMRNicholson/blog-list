@@ -81,7 +81,8 @@ describe('post /api/blogs', () => {
       likes: 1
     }
 
-    await api.post('/api/blogs')
+    await api
+      .post('/api/blogs')
       .send(blog)
       .expect(201)
 
@@ -97,7 +98,8 @@ describe('post /api/blogs', () => {
       url: 'https://reactpatterns.com/'
     }
 
-    await api.post('/api/blogs')
+    await api
+      .post('/api/blogs')
       .send(blog)
       .expect(201)
 
@@ -113,7 +115,8 @@ describe('post /api/blogs', () => {
       author: 'Michael'
     }
 
-    await api.post('/api/blogs')
+    await api
+      .post('/api/blogs')
       .send(blog)
       .expect(400)
 
@@ -129,7 +132,26 @@ describe('post /api/blogs', () => {
       url: 'https://reactpatterns.com/'
     }
 
-    await api.post('/api/blogs')
+    await api
+      .post('/api/blogs')
+      .send(blog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    const savedBlogs = response.body
+
+    expect(savedBlogs).toHaveLength(0)
+  })
+
+  test('returns 400 Bad Request if invalid author', async () => {
+    const blog = {
+      title: 'React',
+      author: 'Mi',
+      url: 'https://reactpatterns.com/'
+    }
+
+    await api
+      .post('/api/blogs')
       .send(blog)
       .expect(400)
 
@@ -149,7 +171,7 @@ describe('delete /api/blogs/:id', () => {
     await Promise.all(promises)
   })
 
-  test('deletes blog as json', async () => {
+  test('deletes blog when given correct id', async () => {
     const before = await api.get('/api/blogs')
     const beforeDel = before.body
     const blog = beforeDel[0]
@@ -172,6 +194,57 @@ describe('delete /api/blogs/:id', () => {
   test('return 500 internal error when given invalid id', async () => {
     await api
       .delete('/api/blogs/123-123')
+      .expect(500)
+  })
+})
+
+describe('put /api/blogs/:id', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+
+    const blogObjects = blogs.map(blog => new Blog(blog))
+    const promises = blogObjects.map(blog => blog.save())
+    await Promise.all(promises)
+  })
+
+  test('updates blog as json', async () => {
+    const blog = { ...blogs[0] }
+    blog.title = 'New Title'
+
+    await api
+      .put(`/api/blogs/${blog._id}`)
+      .send(blog)
+      .expect(204)
+
+    const after = await api.get(`/api/blogs/${blog._id}`)
+    const afterUpdate = after.body
+    expect(afterUpdate.title).toEqual(blog.title)
+  })
+
+  test('returns 400 Bad Request if invalid author', async () => {
+    const blog = { ...blogs[0] }
+    blog.author = 'Mi'
+
+    await api
+      .put(`/api/blogs/${blog._id}`)
+      .send(blog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    const savedBlogs = response.body
+
+    expect(savedBlogs).toHaveLength(0)
+  })
+
+  test('return 404 not found when given incorrect id', async () => {
+    await api
+      .put('/api/blogs/64f32597258c7a1556d37525')
+      .expect(404)
+  })
+
+  test('return 500 internal error when given invalid id', async () => {
+    await api
+      .put('/api/blogs/123-123')
       .expect(500)
   })
 })
