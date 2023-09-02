@@ -21,6 +21,17 @@ blogsRouter.delete('/api/blogs/:id', async (request, response) => {
   response.status(404).send()
 })
 
+blogsRouter.put('/api/blogs/:id', async (request, response) => {
+  const data = request.body
+  const blog = await Blog.findById(request.params.id)
+
+  if (blog) {
+    await Blog.updateOne({}, data, { runValidators: true })
+    response.status(204).send()
+  }
+  response.status(404).send()
+})
+
 blogsRouter.post('/api/blogs', async (request, response) => {
   const data = request.body
   if (!data.likes) data.likes = 0
