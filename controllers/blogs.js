@@ -14,7 +14,10 @@ blogsRouter.get('/api/blogs/:id', async (request, response) => {
 blogsRouter.delete('/api/blogs/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id)
 
-  if (blog) response.send(await Blog.deleteOne(blog))
+  if (blog) {
+    await Blog.deleteOne(blog)
+    response.status(204).send()
+  }
   response.status(404).send()
 })
 
