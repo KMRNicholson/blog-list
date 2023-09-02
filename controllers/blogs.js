@@ -3,7 +3,13 @@ const Blog = require('../models/Blog')
 
 blogsRouter.get('/api/blogs', async (request, response) => { response.send(await Blog.find({})) })
 
-blogsRouter.get('/api/blogs/:id', async (request, response) => { response.json(await Blog.findById(request.params.id)) })
+blogsRouter.get('/api/blogs/:id', async (request, response) => {
+  const blog = await Blog.findById(request.params.id)
+
+  if (blog) response.json(await Blog.findById(request.params.id))
+
+  response.status(404).send()
+})
 
 blogsRouter.post('/api/blogs', async (request, response) => {
   const data = request.body
