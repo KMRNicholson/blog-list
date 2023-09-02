@@ -78,6 +78,7 @@ describe('post /api/blogs', () => {
       title: 'React',
       author: 'Michael',
       url: 'https://reactpatterns.com/',
+      user: '5a422a851b54a676234d17f9',
       likes: 1
     }
 
@@ -95,7 +96,8 @@ describe('post /api/blogs', () => {
     const blog = {
       title: 'React',
       author: 'Michael',
-      url: 'https://reactpatterns.com/'
+      url: 'https://reactpatterns.com/',
+      user: '5a422a851b54a676234d17f9'
     }
 
     await api
@@ -112,7 +114,8 @@ describe('post /api/blogs', () => {
   test('returns 400 Bad Request if missing url', async () => {
     const blog = {
       title: 'React',
-      author: 'Michael'
+      author: 'Michael',
+      user: '5a422a851b54a676234d17f9'
     }
 
     await api
@@ -128,6 +131,25 @@ describe('post /api/blogs', () => {
 
   test('returns 400 Bad Request if missing title', async () => {
     const blog = {
+      author: 'Michael',
+      url: 'https://reactpatterns.com/',
+      user: '5a422a851b54a676234d17f9'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(blog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    const savedBlogs = response.body
+
+    expect(savedBlogs).toHaveLength(0)
+  })
+
+  test('returns 400 Bad Request if missing user', async () => {
+    const blog = {
+      title: 'React',
       author: 'Michael',
       url: 'https://reactpatterns.com/'
     }
