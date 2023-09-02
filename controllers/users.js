@@ -11,7 +11,11 @@ userRouter.post('/api/users', async (request, response) => {
 
   if (existingUser.length === 1) response.status(409).send()
 
-  if (!password) response.status(400).send()
+  const invalidPassword = {
+    error: 'Invalid password. Ensure password is 8 characters long.'
+  }
+  if (!password) response.status(400).send(invalidPassword)
+  if (password.length < 8) response.status(400).send(invalidPassword)
 
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)
