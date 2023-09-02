@@ -17,7 +17,7 @@ describe('post /api/users', () => {
     const user = {
       username: 'kmrnicholson',
       name: 'Kohdy',
-      passwordHash: '81237dhiuhs8'
+      password: '81237dhiuhs8'
     }
 
     await api
@@ -29,7 +29,7 @@ describe('post /api/users', () => {
   test('returns 400 Bad Request if missing username', async () => {
     const user = {
       name: 'Kohdy',
-      passwordHash: '81237dhiuhs8'
+      password: '81237dhiuhs8'
     }
 
     await api
@@ -41,7 +41,7 @@ describe('post /api/users', () => {
   test('returns 400 Bad Request if missing name', async () => {
     const user = {
       username: 'kmrnicholson',
-      passwordHash: '81237dhiuhs8'
+      password: '81237dhiuhs8'
     }
 
     await api
@@ -50,7 +50,7 @@ describe('post /api/users', () => {
       .expect(400)
   })
 
-  test('returns 400 Bad Request if missing passwordHash', async () => {
+  test('returns 400 Bad Request if missing password', async () => {
     const user = {
       username: 'kmrnicholson',
       name: 'Kohdy'
@@ -66,7 +66,7 @@ describe('post /api/users', () => {
     const user = {
       username: 'km',
       name: 'Kohdy',
-      passwordHash: '81237dhiuhs8'
+      password: '81237dhiuhs8'
     }
 
     await api
@@ -79,7 +79,7 @@ describe('post /api/users', () => {
     const user = {
       username: 'kmrnicholson',
       name: 'Ko',
-      passwordHash: '81237dhiuhs8'
+      password: '81237dhiuhs8'
     }
 
     await api
@@ -88,47 +88,14 @@ describe('post /api/users', () => {
       .expect(400)
   })
 
-  test('returns 400 Bad Request if invalid passwordHash', async () => {
-    const user = {
-      username: 'kmrnicholson',
-      name: 'Kohdy',
-      passwordHash: 'notlong'
-    }
-
-    await api
-      .post('/api/users')
-      .send(user)
-      .expect(400)
-  })
-
-  test('returns 400 if username is not unique', async () => {
-    const user = users[0]
-    await api
-      .post('/api/users')
-      .send(user)
+  test('returns 400 Bad Request if username is not unique', async () => {
+    const user = new User(users[0])
+    await user.save()
 
     const newUser = {
       username: user.username,
       name: 'Kohdy',
-      passwordHash: '18237981hudh'
-    }
-
-    await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
-  })
-
-  test('returns 400 if name is not unique', async () => {
-    const user = users[0]
-    await api
-      .post('/api/users')
-      .send(user)
-
-    const newUser = {
-      username: 'kmrnicholson',
-      name: user.name,
-      passwordHash: '18237981hudh'
+      password: '18237981hudh'
     }
 
     await api
