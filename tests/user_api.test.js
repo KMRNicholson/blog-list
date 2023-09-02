@@ -101,7 +101,7 @@ describe('post /api/users', () => {
     await api
       .post('/api/users')
       .send(newUser)
-      .expect(400)
+      .expect(409)
   })
 })
 
