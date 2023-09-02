@@ -36,6 +36,16 @@ describe('get /api/blogs', () => {
 
     expect(blog.id).toBeDefined()
   })
+})
+
+describe('get /api/blogs/:id', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+
+    const blogObjects = blogs.map(blog => new Blog(blog))
+    const promises = blogObjects.map(blog => blog.save())
+    await Promise.all(promises)
+  })
 
   test('returns specific blog when given id', async () => {
     const expected = blogs[0]
@@ -43,6 +53,18 @@ describe('get /api/blogs', () => {
     const blog = response.body
 
     expect(expected._id).toEqual(blog.id)
+  })
+
+  test('return 404 not found when given incorrect id', async () => {
+    await api
+      .get('/api/blogs/64f32597258c7a1556d37525')
+      .expect(404)
+  })
+
+  test('return 500 internal error when given invalid id', async () => {
+    await api
+      .get('/api/blogs/123-123')
+      .expect(500)
   })
 })
 
@@ -115,6 +137,43 @@ describe('post /api/blogs', () => {
     const savedBlogs = response.body
 
     expect(savedBlogs).toHaveLength(0)
+  })
+})
+
+describe('delete /api/blogs/:id', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+
+    const blogObjects = blogs.map(blog => new Blog(blog))
+    const promises = blogObjects.map(blog => blog.save())
+    await Promise.all(promises)
+  })
+
+  test('deletes blog as json', async () => {
+    const before = await api.get('/api/blogs')
+    const beforeDel = before.body
+    const blog = beforeDel[0]
+
+    await api
+      .delete(`/api/blogs/${blog.id}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const after = await api.get('/api/blogs')
+    const afterDel = after.body
+    expect(afterDel).toHaveLength(beforeDel.length - 1)
+  })
+
+  test('return 404 not found when given incorrect id', async () => {
+    await api
+      .delete('/api/blogs/64f32597258c7a1556d37525')
+      .expect(404)
+  })
+
+  test('return 500 internal error when given invalid id', async () => {
+    await api
+      .delete('/api/blogs/123-123')
+      .expect(500)
   })
 })
 
