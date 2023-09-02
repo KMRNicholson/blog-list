@@ -117,3 +117,7 @@ describe('post /api/blogs', () => {
     expect(savedBlogs).toHaveLength(0)
   })
 })
+
+afterAll(async () => {
+  await mongoose.connection.close()
+})
