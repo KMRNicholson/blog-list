@@ -8,6 +8,31 @@ mongoose.set('bufferTimeoutMS', 50000)
 
 const api = supertest(app)
 
+describe('get /api/users', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const userObjects = users.map(user => new User(user))
+    const promises = userObjects.map(user => user.save())
+    await Promise.all(promises)
+  })
+
+  test('returns users as json', async () => {
+    await api
+      .get('/api/users')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('returns users without passwords', async () => {
+    const { body } = await api.get('/api/users')
+
+    body.forEach(user => {
+      expect(user.passwordHash).toBeUndefined()
+    })
+  })
+})
+
 describe('post /api/users', () => {
   beforeEach(async () => {
     await User.deleteMany({})
