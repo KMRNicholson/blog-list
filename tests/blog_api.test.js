@@ -229,9 +229,20 @@ describe('delete /api/blogs/:id', () => {
   })
 
   test('deletes blog when given correct id', async () => {
+    const { body } = await api.get('/api/users')
+
+    const blog = new Blog({
+      title: 'Test',
+      author: 'Test User',
+      url: 'https://test.com/',
+      user: new mongoose.Types.ObjectId(body[0].id),
+      likes: 1
+    })
+
+    await blog.save()
+
     const before = await api.get('/api/blogs')
     const beforeDel = before.body
-    const blog = beforeDel[0]
 
     const delRes = await del(user, blog.id)
     expect(delRes.statusCode).toEqual(204)
