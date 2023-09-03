@@ -80,7 +80,7 @@ describe('post /api/login', () => {
     expect(body.error).toEqual('invalid username or password')
   })
 
-  test('unsuccessful login returns generic message if user exists', async () => {
+  test('unsuccessful login returns generic message if user does not exist', async () => {
     const loginData = {
       username: 'wrongUser',
       password: 'wrongPwd'

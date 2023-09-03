@@ -3,16 +3,16 @@ const bcrypt = require('bcrypt')
 const loginRouter = require('express').Router()
 const User = require('../models/User')
 
-loginRouter.post('/', async (request, response) => {
+loginRouter.post('/api/login', async (request, response) => {
   const { username, password } = request.body
   const obfuscatedMessage = 'invalid username or password'
 
   const user = await User.findOne({ username })
-  if (user === null) response.status(401).send(obfuscatedMessage)
+  if (user === null) response.status(401).json({ error: obfuscatedMessage })
 
   const correctPassword = await bcrypt.compare(password, user.passwordHash)
-  if (correctPassword) {
-    response.status(401).send(obfuscatedMessage)
+  if (!correctPassword) {
+    response.status(401).json({ error: obfuscatedMessage })
   }
 
   const userInfo = {
