@@ -204,10 +204,6 @@ describe('post /api/blogs', () => {
 
     expect(savedBlogs).toHaveLength(0)
   })
-
-  afterAll(async () => {
-    await User.deleteMany({})
-  })
 })
 
 describe('delete /api/blogs/:id', () => {
