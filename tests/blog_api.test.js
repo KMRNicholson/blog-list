@@ -19,10 +19,10 @@ const login = async user => {
     .post('/api/login')
     .send(loginData)
 
-  api.set({ Authorization: `Bearer ${token}` })
+  return token
 }
 
-const signup = async user => await api.post('/api/users').send(user)
+const signup = async user => api.post('/api/users').send(user)
 
 describe('get /api/blogs', () => {
   beforeEach(async () => {
@@ -90,19 +90,15 @@ describe('get /api/blogs/:id', () => {
 })
 
 describe('post /api/blogs', () => {
-  let userId = ''
+  const user = {
+    username: 'testuser1',
+    name: 'Test User',
+    password: 'securePwd'
+  }
 
   beforeAll(async () => {
     await User.deleteMany({})
-
-    const user = {
-      username: 'testuser1',
-      name: 'Test User',
-      password: 'securePwd'
-    }
-
     await signup(user)
-    await login(user)
   })
 
   beforeEach(async () => {
@@ -117,9 +113,12 @@ describe('post /api/blogs', () => {
       likes: 1
     }
 
+    const token = await login(user)
+
     await api
       .post('/api/blogs')
       .send(blog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(201)
 
     const response = await api.get('/api/blogs')
