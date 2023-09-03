@@ -26,7 +26,7 @@ const errorHandler = (error, request, response, next) => {
   return next(error)
 }
 
-const userIdExtractor = (request, response, next) => {
+const tokenExtractor = (request, response, next) => {
   if (request.method === 'GET') return next()
   const authorization = request.get('Authorization')
   const genericMsg = 'Unauthorized'
@@ -37,21 +37,22 @@ const userIdExtractor = (request, response, next) => {
     return next()
   }
 
-  const token = authorization.replace('Bearer ', '')
+  request.token = authorization.replace('Bearer ', '')
+  return next()
+}
 
+const userExtractor = (request, response, next) => {
   let decodedToken = null
+  const genericMsg = 'Unauthorized'
   try {
-    decodedToken = jwt.verify(token, process.env.SECRET)
+    decodedToken = jwt.verify(request.token, process.env.SECRET)
   } catch {
     logger.error('Token verification failed')
     response.status(401).send({ error: genericMsg })
     return next()
   }
 
-  request.user = {
-    id: decodedToken.id
-  }
-
+  request.user = { ...decodedToken }
   return next()
 }
 
@@ -61,5 +62,6 @@ module.exports = {
   errorHandler,
   cors: cors(),
   json: express.json(),
-  userIdExtractor
+  tokenExtractor,
+  userExtractor
 }
