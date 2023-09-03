@@ -10,6 +10,17 @@ const getTokenFrom = request => {
   return authorization.replace('Bearer ', '')
 }
 
+const getIdFrom = token => {
+  let decodedToken = null
+  try {
+    decodedToken = jwt.verify(token, process.env.SECRET)
+  } catch {
+    return decodedToken
+  }
+
+  return decodedToken.id
+}
+
 blogsRouter.get('/api/blogs', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
   response.send(blogs)
@@ -51,7 +62,8 @@ blogsRouter.post('/api/blogs', async (request, response) => {
   const genericMsg = 'Unauthorized'
 
   const token = getTokenFrom(request)
-  const { id } = jwt.verify(token, process.env.SECRET)
+  const id = getIdFrom(token)
+
   if (!id) response.status(401).json({ error: genericMsg })
 
   const user = await User.findById(id)
@@ -65,8 +77,6 @@ blogsRouter.post('/api/blogs', async (request, response) => {
     await user.save()
     response.status(201).json(savedBlog)
   }
-
-  response.status(500).send()
 })
 
 module.exports = blogsRouter
