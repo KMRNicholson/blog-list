@@ -45,7 +45,7 @@ const user = {
   password: 'securePwd'
 }
 
-const signup = async user => api.post('/api/users').send(user)
+const signup = async userData => api.post('/api/users').send(userData)
 
 describe('get /api/blogs', () => {
   beforeEach(async () => {
@@ -233,7 +233,7 @@ describe('delete /api/blogs/:id', () => {
     const beforeDel = before.body
     const blog = beforeDel[0]
 
-    const delRes = await del(user, blog._id)
+    const delRes = await del(user, blog.id)
     expect(delRes.statusCode).toEqual(204)
 
     const after = await api.get('/api/blogs')
@@ -242,9 +242,17 @@ describe('delete /api/blogs/:id', () => {
   })
 
   test('returns 401 Unauthorized if incorrect token used', async () => {
-    const before = await api.get('/api/blogs')
-    const beforeDel = before.body
-    const blog = beforeDel[0]
+    const { body } = await api.get('/api/users')
+
+    const blog = new Blog({
+      title: 'Test',
+      author: 'Test User',
+      url: 'https://test.com/',
+      user: new mongoose.Types.ObjectId(body.id),
+      likes: 1
+    })
+
+    await blog.save()
 
     await api
       .delete(`/api/blogs/${blog._id}`)
