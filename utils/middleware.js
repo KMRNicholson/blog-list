@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
@@ -10,8 +11,9 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-const unknownEndpoint = (request, response) => {
+const unknownEndpoint = (request, response, next) => {
   response.status(404).send({ error: 'unknown endpoint' })
+  next()
 }
 
 const errorHandler = (error, request, response, next) => {
@@ -24,10 +26,37 @@ const errorHandler = (error, request, response, next) => {
   return next(error)
 }
 
+const userIdExtractor = (request, response, next) => {
+  if (request.method !== 'POST') return next()
+  const authorization = request.get('Authorization')
+  const genericMsg = 'Unauthorized'
+
+  if (!authorization) {
+    logger.error('Missing authorization header')
+    response.status(401).send({ error: genericMsg })
+    return next()
+  }
+
+  const token = authorization.replace('Bearer ', '')
+
+  let decodedToken = null
+  try {
+    decodedToken = jwt.verify(token, process.env.SECRET)
+  } catch {
+    logger.error('Token verification failed')
+    response.status(401).send({ error: genericMsg })
+    return next()
+  }
+
+  request.id = decodedToken.id
+  next()
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
   cors: cors(),
-  json: express.json()
+  json: express.json(),
+  userIdExtractor
 }
