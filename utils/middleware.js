@@ -27,7 +27,7 @@ const errorHandler = (error, request, response, next) => {
 }
 
 const userIdExtractor = (request, response, next) => {
-  if (request.method !== 'POST') return next()
+  if (request.method === 'GET') return next()
   const authorization = request.get('Authorization')
   const genericMsg = 'Unauthorized'
 
@@ -48,8 +48,11 @@ const userIdExtractor = (request, response, next) => {
     return next()
   }
 
-  request.id = decodedToken.id
-  next()
+  request.user = {
+    id: decodedToken.id
+  }
+
+  return next()
 }
 
 module.exports = {

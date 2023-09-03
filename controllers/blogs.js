@@ -17,12 +17,14 @@ blogsRouter.get('/api/blogs/:id', async (request, response) => {
 
 blogsRouter.delete('/api/blogs/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id)
+  if (!blog) response.status(404).send()
 
-  if (blog) {
-    await Blog.deleteOne(blog)
-    response.status(204).send()
-  }
-  response.status(404).send()
+  const user = await User.findById(request.user.id)
+
+  if (blog.user.toString() !== user._id.toString()) response.status(401).json({ error: 'Unauthorized' })
+
+  await Blog.deleteOne(blog)
+  response.status(204).send()
 })
 
 blogsRouter.put('/api/blogs/:id', async (request, response) => {
@@ -39,9 +41,8 @@ blogsRouter.put('/api/blogs/:id', async (request, response) => {
 blogsRouter.post('/api/blogs', async (request, response) => {
   const data = request.body
   if (!data.likes) data.likes = 0
-  if (!request.id) response.status(401).json({ error: 'Unauthorized' })
 
-  const user = await User.findById(request.id)
+  const user = await User.findById(request.user.id)
   data.user = user._id
 
   const blog = new Blog(data)
