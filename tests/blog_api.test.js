@@ -15,11 +15,20 @@ const login = async user => {
     password: user.password
   }
 
-  const { token } = await api
+  const { body } = await api
     .post('/api/login')
     .send(loginData)
 
-  return token
+  return body.token
+}
+
+const post = async (user, blog) => {
+  const token = await login(user)
+
+  return api
+    .post('/api/blogs')
+    .send(blog)
+    .set('Authorization', `Bearer ${token}`)
 }
 
 const signup = async user => api.post('/api/users').send(user)
@@ -113,13 +122,8 @@ describe('post /api/blogs', () => {
       likes: 1
     }
 
-    const token = await login(user)
-
-    await api
-      .post('/api/blogs')
-      .send(blog)
-      .set('Authorization', `Bearer ${token}`)
-      .expect(201)
+    const postRes = await post(user, blog)
+    expect(postRes.statusCode).toEqual(201)
 
     const response = await api.get('/api/blogs')
 
@@ -133,10 +137,8 @@ describe('post /api/blogs', () => {
       url: 'https://reactpatterns.com/'
     }
 
-    await api
-      .post('/api/blogs')
-      .send(blog)
-      .expect(201)
+    const postRes = await post(user, blog)
+    expect(postRes.statusCode).toEqual(201)
 
     const response = await api.get('/api/blogs')
     const createdBlog = response.body[0]
@@ -150,11 +152,10 @@ describe('post /api/blogs', () => {
       author: 'Michael'
     }
 
-    api.set({ Authorization: 'Bearer incorrectToken' })
-
     await api
       .post('/api/blogs')
       .send(blog)
+      .set('Authorization', 'Bearer invalidToken')
       .expect(401)
   })
 
@@ -164,10 +165,8 @@ describe('post /api/blogs', () => {
       author: 'Michael'
     }
 
-    await api
-      .post('/api/blogs')
-      .send(blog)
-      .expect(400)
+    const postRes = await post(user, blog)
+    expect(postRes.statusCode).toEqual(400)
 
     const response = await api.get('/api/blogs')
     const savedBlogs = response.body
@@ -181,28 +180,8 @@ describe('post /api/blogs', () => {
       url: 'https://reactpatterns.com/'
     }
 
-    await api
-      .post('/api/blogs')
-      .send(blog)
-      .expect(400)
-
-    const response = await api.get('/api/blogs')
-    const savedBlogs = response.body
-
-    expect(savedBlogs).toHaveLength(0)
-  })
-
-  test('returns 400 Bad Request if missing user', async () => {
-    const blog = {
-      title: 'React',
-      author: 'Michael',
-      url: 'https://reactpatterns.com/'
-    }
-
-    await api
-      .post('/api/blogs')
-      .send(blog)
-      .expect(400)
+    const postRes = await post(user, blog)
+    expect(postRes.statusCode).toEqual(400)
 
     const response = await api.get('/api/blogs')
     const savedBlogs = response.body
@@ -217,10 +196,8 @@ describe('post /api/blogs', () => {
       url: 'https://reactpatterns.com/'
     }
 
-    await api
-      .post('/api/blogs')
-      .send(blog)
-      .expect(400)
+    const postRes = await post(user, blog)
+    expect(postRes.statusCode).toEqual(400)
 
     const response = await api.get('/api/blogs')
     const savedBlogs = response.body

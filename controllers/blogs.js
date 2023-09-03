@@ -1,5 +1,14 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/Blog')
+const jwt = require('jsonwebtoken')
+const User = require('../models/User')
+
+const getTokenFrom = request => {
+  const authorization = request.get('Authorization')
+  if (!authorization) return null
+
+  return authorization.replace('Bearer ', '')
+}
 
 blogsRouter.get('/api/blogs', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
@@ -39,10 +48,23 @@ blogsRouter.post('/api/blogs', async (request, response) => {
   const data = request.body
   if (!data.likes) data.likes = 0
 
-  const blog = new Blog(data)
-  const result = await blog.save()
+  const genericMsg = 'Unauthorized'
 
-  if (result) response.status(201).json(result)
+  const token = getTokenFrom(request)
+  const { id } = jwt.verify(token, process.env.SECRET)
+  if (!id) response.status(401).json({ error: genericMsg })
+
+  const user = await User.findById(id)
+  data.user = user._id
+
+  const blog = new Blog(data)
+  const savedBlog = await blog.save()
+
+  if (savedBlog) {
+    user.blogs = user.blogs.concat(blog._id)
+    await user.save()
+    response.status(201).json(savedBlog)
+  }
 
   response.status(500).send()
 })
