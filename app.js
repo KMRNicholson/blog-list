@@ -29,6 +29,7 @@ const app = express()
 app.use(middleware.cors)
 app.use(middleware.json)
 app.use(middleware.requestLogger)
+app.use('/api/blogs', middleware.userIdExtractor)
 
 app.use(blogRouter)
 app.use(userRouter)
