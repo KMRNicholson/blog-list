@@ -27,7 +27,7 @@ const errorHandler = (error, request, response, next) => {
 }
 
 const tokenExtractor = (request, response, next) => {
-  if (request.method === 'GET') return next()
+  if (request.method === 'GET' || request.method === 'PUT') return next()
   const authorization = request.get('Authorization')
   const genericMsg = 'Unauthorized'
 
@@ -42,6 +42,7 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const userExtractor = (request, response, next) => {
+  if (request.method === 'GET' || request.method === 'PUT') return next()
   let decodedToken = null
   const genericMsg = 'Unauthorized'
   try {
