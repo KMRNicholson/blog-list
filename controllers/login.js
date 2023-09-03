@@ -8,7 +8,7 @@ loginRouter.post('/', async (request, response) => {
   const obfuscatedMessage = 'invalid username or password'
 
   const user = await User.findOne({ username })
-  if (user === null) response.status(404).send(obfuscatedMessage)
+  if (user === null) response.status(401).send(obfuscatedMessage)
 
   const correctPassword = await bcrypt.compare(password, user.passwordHash)
   if (correctPassword) {
@@ -17,7 +17,7 @@ loginRouter.post('/', async (request, response) => {
 
   const userInfo = {
     username: user.username,
-    id: user._id,
+    id: user._id
   }
 
   const token = jwt.sign(userInfo, process.env.SECRET)
