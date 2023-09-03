@@ -25,6 +25,7 @@ mongoose.connect(mongoDBUri)
   })
 
 const app = express()
+app.use(express.static('frontend'))
 
 app.use(middleware.cors)
 app.use(middleware.json)
