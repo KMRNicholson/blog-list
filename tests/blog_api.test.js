@@ -22,13 +22,27 @@ const login = async user => {
   return body.token
 }
 
-const post = async (user, blog) => {
-  const token = await login(user)
+const post = async (creds, blog) => {
+  const token = await login(creds)
 
   return api
     .post('/api/blogs')
     .send(blog)
     .set('Authorization', `Bearer ${token}`)
+}
+
+const del = async (creds, blogId) => {
+  const token = await login(creds)
+
+  return api
+    .delete(`/api/blogs/${blogId}`)
+    .set('Authorization', `Bearer ${token}`)
+}
+
+const user = {
+  username: 'testuser1',
+  name: 'Test User',
+  password: 'securePwd'
 }
 
 const signup = async user => api.post('/api/users').send(user)
@@ -99,12 +113,6 @@ describe('get /api/blogs/:id', () => {
 })
 
 describe('post /api/blogs', () => {
-  const user = {
-    username: 'testuser1',
-    name: 'Test User',
-    password: 'securePwd'
-  }
-
   beforeAll(async () => {
     await User.deleteMany({})
     await signup(user)
@@ -207,6 +215,11 @@ describe('post /api/blogs', () => {
 })
 
 describe('delete /api/blogs/:id', () => {
+  beforeAll(async () => {
+    await User.deleteMany({})
+    await signup(user)
+  })
+
   beforeEach(async () => {
     await Blog.deleteMany({})
 
@@ -220,25 +233,34 @@ describe('delete /api/blogs/:id', () => {
     const beforeDel = before.body
     const blog = beforeDel[0]
 
-    await api
-      .delete(`/api/blogs/${blog.id}`)
-      .expect(204)
+    const delRes = await del(user, blog._id)
+    expect(delRes.statusCode).toEqual(204)
 
     const after = await api.get('/api/blogs')
     const afterDel = after.body
     expect(afterDel).toHaveLength(beforeDel.length - 1)
   })
 
-  test('return 404 not found when given incorrect id', async () => {
+  test('returns 401 Unauthorized if incorrect token used', async () => {
+    const before = await api.get('/api/blogs')
+    const beforeDel = before.body
+    const blog = beforeDel[0]
+
     await api
-      .delete('/api/blogs/64f32597258c7a1556d37525')
-      .expect(404)
+      .delete(`/api/blogs/${blog._id}`)
+      .send(blog)
+      .set('Authorization', 'Bearer invalidToken')
+      .expect(401)
+  })
+
+  test('return 404 not found when given incorrect id', async () => {
+    const delRes = await del(user, '64f32597258c7a1556d37525')
+    expect(delRes.statusCode).toEqual(404)
   })
 
   test('return 500 internal error when given invalid id', async () => {
-    await api
-      .delete('/api/blogs/123-123')
-      .expect(500)
+    const delRes = await del(user, '123-123')
+    expect(delRes.statusCode).toEqual(500)
   })
 })
 
