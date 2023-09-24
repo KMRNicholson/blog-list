@@ -32,7 +32,7 @@ blogsRouter.put('/api/blogs/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id)
 
   if (blog) {
-    await Blog.updateOne({}, data, { runValidators: true })
+    await Blog.updateOne({ _id: blog._id }, data, { runValidators: true })
     response.status(204).send()
   }
   response.status(404).send()
