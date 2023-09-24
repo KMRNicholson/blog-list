@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
-const logger = require('./logger')
 const jwt = require('jsonwebtoken')
+const logger = require('./logger')
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
