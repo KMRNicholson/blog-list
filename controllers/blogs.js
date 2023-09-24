@@ -8,7 +8,7 @@ blogsRouter.get('/api/blogs', async (request, response) => {
 })
 
 blogsRouter.get('/api/blogs/:id', async (request, response) => {
-  const blog = await Blog.findById(request.params.id)
+  const blog = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1, id: 1 })
 
   if (blog) response.json(blog)
 
@@ -32,7 +32,7 @@ blogsRouter.put('/api/blogs/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id)
 
   if (blog) {
-    await Blog.updateOne({}, data, { runValidators: true })
+    await Blog.updateOne({ _id: blog._id }, data, { runValidators: true })
     response.status(204).send()
   }
   response.status(404).send()
@@ -51,7 +51,8 @@ blogsRouter.post('/api/blogs', async (request, response) => {
   if (savedBlog) {
     user.blogs = user.blogs.concat(blog._id)
     await user.save()
-    response.status(201).json(savedBlog)
+    const body = await Blog.findById(blog._id).populate('user', { username: 1, name: 1, id: 1 })
+    response.status(201).json(body)
   }
 })
 

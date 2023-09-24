@@ -138,6 +138,20 @@ describe('post /api/blogs', () => {
     expect(response.body).toHaveLength(1)
   })
 
+  test('returns blog with user that was created', async () => {
+    const blog = {
+      title: 'React',
+      author: 'Michael',
+      url: 'https://reactpatterns.com/',
+      likes: 1
+    }
+
+    const postRes = await post(user, blog)
+    expect(postRes.body).toBeDefined()
+    expect(postRes.body.user.name).toEqual(user.name)
+    expect(postRes.body.user.username).toEqual(user.username)
+  })
+
   test('default likes to 0 if not provided in request body', async () => {
     const blog = {
       title: 'React',
