@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const loginRouter = require('express').Router()
 const User = require('../models/User')
 
-loginRouter.post('/api/login', async (request, response) => {
+loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body
   const obfuscatedMessage = 'invalid username or password'
 
