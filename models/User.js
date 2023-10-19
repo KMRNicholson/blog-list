@@ -1,35 +1,35 @@
-const mongoose = require('mongoose')
-const helper = require('./helper')
+const mongoose = require("mongoose");
+const helper = require("./helper");
 
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
     minLength: 3,
     required: true,
-    unique: true
+    unique: true,
   },
   name: {
     type: String,
     minLength: 3,
-    required: true
+    required: true,
   },
   passwordHash: {
     type: String,
-    required: true
+    required: true,
   },
   blogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Blog'
-    }
-  ]
-})
+      ref: "Blog",
+    },
+  ],
+});
 
-const removeProperties = ['passwordHash']
+const removeProperties = ["passwordHash"];
 
-userSchema.set('toJSON', helper.transform(removeProperties))
+userSchema.set("toJSON", helper.transform(removeProperties));
 // userSchema.set('toJSON', removePasswordHash)
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model("User", userSchema);
 
-module.exports = User
+module.exports = User;

@@ -1,25 +1,25 @@
-const transform = removeProperties => {
+const transform = (removeProperties) => {
   const tObject = {
     transform: (document, returnedObject) => {
       const transformedObject = {
         ...returnedObject,
-        id: returnedObject._id.toString()
-      }
+        id: returnedObject._id.toString(),
+      };
 
-      delete transformedObject._id
-      delete transformedObject.__v
+      delete transformedObject._id;
+      delete transformedObject.__v;
       if (removeProperties) {
-        removeProperties.forEach(property => {
-          delete transformedObject[property]
-        })
+        removeProperties.forEach((property) => {
+          delete transformedObject[property];
+        });
       }
-      return transformedObject
-    }
-  }
+      return transformedObject;
+    },
+  };
 
-  return tObject
-}
+  return tObject;
+};
 
 module.exports = {
-  transform
-}
+  transform,
+};

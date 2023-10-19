@@ -24,8 +24,5 @@ jspm_packages/
 .env.production.local
 .env.local
 
-# package-lock.json file
-package-lock.json
-
 # request files for VSCode REST plugin
 requests

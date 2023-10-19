@@ -1,30 +1,30 @@
-const mongoose = require('mongoose')
-const helper = require('./helper')
+const mongoose = require("mongoose");
+const helper = require("./helper");
 
 const blogSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   author: {
     type: String,
     minLength: 3,
-    required: true
+    required: true,
   },
   url: {
     type: String,
-    required: true
+    required: true,
   },
   likes: Number,
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  }
-})
+    ref: "User",
+    required: true,
+  },
+});
 
-blogSchema.set('toJSON', helper.transform())
+blogSchema.set("toJSON", helper.transform());
 
-const Blog = mongoose.model('Blog', blogSchema)
+const Blog = mongoose.model("Blog", blogSchema);
 
-module.exports = Blog
+module.exports = Blog;
