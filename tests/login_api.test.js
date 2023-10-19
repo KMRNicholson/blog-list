@@ -1,100 +1,87 @@
-const mongoose = require('mongoose')
-const supertest = require('supertest')
-const users = require('./data/users')
-const app = require('../app')
-const User = require('../models/User')
+const mongoose = require("mongoose");
+const supertest = require("supertest");
+const users = require("./data/users");
+const app = require("../app");
+const User = require("../models/User");
 
-mongoose.set('bufferTimeoutMS', 50000)
+mongoose.set("bufferTimeoutMS", 50000);
 
-const api = supertest(app)
+const api = supertest(app);
 
-describe('post /api/login', () => {
+describe("post /api/login", () => {
   beforeEach(async () => {
-    await User.deleteMany({})
+    await User.deleteMany({});
 
-    const userObjects = users.map(user => new User(user))
-    const promises = userObjects.map(user => user.save())
-    await Promise.all(promises)
-  })
+    const userObjects = users.map((user) => new User(user));
+    const promises = userObjects.map((user) => user.save());
+    await Promise.all(promises);
+  });
 
-  test('successfully logs in with a correct password', async () => {
+  test("successfully logs in with a correct password", async () => {
     const user = {
-      username: 'kmrnicholson',
-      name: 'Kohdy',
-      password: 'securePwd1'
-    }
+      username: "kmrnicholson",
+      name: "Kohdy",
+      password: "securePwd1",
+    };
 
-    await api
-      .post('/api/users')
-      .send(user)
+    await api.post("/api/users").send(user);
 
     const loginData = {
       username: user.username,
-      password: user.password
-    }
+      password: user.password,
+    };
 
-    await api
-      .post('/api/login')
-      .send(loginData)
-      .expect(200)
-  })
+    await api.post("/api/login").send(loginData).expect(200);
+  });
 
-  test('successful login returns username, name and token', async () => {
+  test("successful login returns username, name and token", async () => {
     const user = {
-      username: 'kmrnicholson',
-      name: 'Kohdy',
-      password: 'securePwd1'
-    }
+      username: "kmrnicholson",
+      name: "Kohdy",
+      password: "securePwd1",
+    };
 
-    await api
-      .post('/api/users')
-      .send(user)
+    await api.post("/api/users").send(user);
 
     const loginData = {
       username: user.username,
-      password: user.password
-    }
+      password: user.password,
+    };
 
-    const { body } = await api
-      .post('/api/login')
-      .send(loginData)
+    const { body } = await api.post("/api/login").send(loginData);
 
-    expect(body.username).toBeDefined()
-    expect(body.name).toBeDefined()
-    expect(body.token).toBeDefined()
-  })
+    expect(body.username).toBeDefined();
+    expect(body.name).toBeDefined();
+    expect(body.token).toBeDefined();
+  });
 
-  test('unsuccessful login returns generic message if user exists', async () => {
-    const user = users[0]
+  test("unsuccessful login returns generic message if user exists", async () => {
+    const user = users[0];
 
     const loginData = {
       username: user.username,
-      password: 'wrongPwd'
-    }
+      password: "wrongPwd",
+    };
 
-    const { statusCode, body } = await api
-      .post('/api/login')
-      .send(loginData)
+    const { statusCode, body } = await api.post("/api/login").send(loginData);
 
-    expect(statusCode).toEqual(401)
-    expect(body.error).toEqual('invalid username or password')
-  })
+    expect(statusCode).toEqual(401);
+    expect(body.error).toEqual("invalid username or password");
+  });
 
-  test('unsuccessful login returns generic message if user does not exist', async () => {
+  test("unsuccessful login returns generic message if user does not exist", async () => {
     const loginData = {
-      username: 'wrongUser',
-      password: 'wrongPwd'
-    }
+      username: "wrongUser",
+      password: "wrongPwd",
+    };
 
-    const { statusCode, body } = await api
-      .post('/api/login')
-      .send(loginData)
+    const { statusCode, body } = await api.post("/api/login").send(loginData);
 
-    expect(statusCode).toEqual(401)
-    expect(body.error).toEqual('invalid username or password')
-  })
-})
+    expect(statusCode).toEqual(401);
+    expect(body.error).toEqual("invalid username or password");
+  });
+});
 
 afterAll(async () => {
-  await mongoose.connection.close()
-})
+  await mongoose.connection.close();
+});
